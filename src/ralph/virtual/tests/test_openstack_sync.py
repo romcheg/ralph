@@ -4,6 +4,7 @@ from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
 from django.test.utils import override_settings
 
+from dateutil import parser
 from ralph.assets.models.components import ComponentModel
 from ralph.assets.tests.factories import DataCenterAssetModelFactory
 from ralph.data_center.models.physical import DataCenterAsset
@@ -94,11 +95,7 @@ class TestOpenstackSync(RalphTestCase):
             # check the creation date only for new hosts
             if host_id.find('_os_') != -1:
                 self.assertEqual(
-                    datetime.strptime(
-                        test_host['created'],
-                        self.cmd.DATETIME_FORMAT
-                    ),
-                    host.created,
+                    parser.parse(test_host['created']), host.created,
                 )
 
     def test_check_add_flavor(self):

@@ -6,6 +6,7 @@ from datetime import datetime
 from functools import lru_cache
 
 import reversion as revisions
+from dateutil import parser
 from django.conf import settings
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.core.management.base import BaseCommand
@@ -500,8 +501,7 @@ class Command(BaseCommand):
 
         # workaround - created field has auto_now_add attribute
         new_server.save()
-        new_server.created = datetime.strptime(openstack_server['created'],
-                                               self.DATETIME_FORMAT)
+        new_server.created = parser.parse(openstack_server['created'])
         self._save_object(new_server, 'add server %s'
                           % new_server.hostname)
 
