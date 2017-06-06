@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
+from django.core.paginator import Paginator
+from django.http import StreamingHttpResponse
 from django.utils.translation import ugettext_lazy as _
+from import_export.forms import ExportForm
+from import_export.formats import base_formats as export_formats
 
 from ralph.admin import RalphAdmin, RalphMPTTAdmin, register
 from ralph.admin.mixins import RalphAdminForm
@@ -102,6 +106,81 @@ class OperationAdmin(AttachmentsMixin, RalphAdmin):
 
     def get_changelist(self, request, **kwargs):
         return OperationChangeList
+
+    def get_export_data_whole(self, file_format, request):
+        yield 'BOO'
+        queryset = self.get_export_queryset(request)
+        resource_class = self.get_export_resource_class()
+
+        data = resource_class().export(queryset)
+        yield file_format.export_data(data)
+
+    def get_export_data_in_chunks(self, file_format, request):
+        """
+        Returns file_format representation for given queryset.
+        """
+        yield 'BOO'
+        queryset = self.get_export_queryset(
+            request,
+            iterated=False,
+            prefetch=False
+        )
+        start = 0
+        step = 100
+
+        resource_class = self.get_export_resource_class()
+
+        while True:
+            to_export = queryset[start:start+step].prefetch_related(
+                *resource_class._meta.prefetch_related
+            )
+
+            import ipdb; ipdb.set_trace()
+            to_export = to_export.values_list()
+
+            data = resource_class().export(to_export)
+
+            if len(data) == 0:
+                break
+
+            if start != 0:
+                data.headers = None
+
+            export_data = file_format.export_data(data)
+            yield export_data
+            start += step
+
+    def export_action(self, request, *args, **kwargs):
+        chunkable_formats = {export_formats.CSV, export_formats.TSV}
+
+        formats = self.get_export_formats()
+        form = ExportForm(formats, request.POST or None)
+        if form.is_valid():
+            file_format = formats[
+                int(form.cleaned_data['file_format'])
+            ]()
+
+            content_type = file_format.get_content_type()
+
+            if type(file_format) in chunkable_formats:
+                export_data = self.get_export_data_in_chunks(
+                    file_format,
+                    request
+                )
+            else:
+                export_data = self.get_export_data_whole(file_format, request)
+
+            response = StreamingHttpResponse(
+                export_data,
+                content_type=content_type
+            )
+
+            response['Content-Disposition'] = 'attachment; filename=%s' % (
+                self.get_export_filename(file_format),
+            )
+            return response
+
+        return super().export_action(request, *args, **kwargs)
 
 
 @register(Change)

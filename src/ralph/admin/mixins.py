@@ -393,7 +393,7 @@ class RalphAdminMixin(DashboardChangelistMixin, RalphAutocompleteMixin):
 class RalphAdminImportExportMixin(ImportExportModelAdmin):
     _export_queryset_manager = None
 
-    def get_export_queryset(self, request):
+    def get_export_queryset(self, request, iterated=True, prefetch=True):
         # mark request as "exporter" request
         request._is_export = True
         queryset = super().get_export_queryset(request)
@@ -412,12 +412,15 @@ class RalphAdminImportExportMixin(ImportExportModelAdmin):
         resource_prefetch_related = getattr(
             resource._meta, 'prefetch_related', []
         )
-        if resource_prefetch_related:
+        if prefetch and resource_prefetch_related:
             queryset = queryset.prefetch_related(*resource_prefetch_related)
         # cast to list to consider all prefetch_related (django-import-export
         # use queryset.iterator() to "save memory", but then for every row
         # sql queries are made to fetch all m2m relations)
-        return list(queryset)
+        if iterated:
+            return list(queryset)
+        else:
+            return queryset
 
     def get_export_resource_class(self):
         """
