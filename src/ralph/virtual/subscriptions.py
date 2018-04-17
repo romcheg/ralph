@@ -30,7 +30,8 @@ def generate_listeners():
     for subscription_config in settings.DCASSET_SYNC_ENDPOINTS:
         sub_name = subscription_config['name']
 
-        # NOTE(romcheg): Work around #####
+        # NOTE(romcheg): Work around the issue when ready() hook is called
+        #                10 times.
         if sub_name in SUBSCRIPTIONS: continue
 
         SUBSCRIPTIONS[sub_name] = pyhermes.subscriber(sub_name)(
