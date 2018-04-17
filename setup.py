@@ -32,6 +32,9 @@ setup(
             'test_ralph = ralph.__main__:test',
             'validate_ralph = ralph.cross_validator.__main__:main',
         ],
+        'ralph.dchost_processors': [
+            'ralph.dchost_processor.noop=ralph.virtual.processors.noop:endpoint',
+        ],
     },
     classifiers=[
         'Development Status :: 4 - Beta',

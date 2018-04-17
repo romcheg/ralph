@@ -3,6 +3,7 @@ from importlib import import_module
 
 from django.apps import AppConfig
 
+from ralph.virtual.subscriptions import generate_listeners
 
 class RalphAppConfig(AppConfig):
     def get_load_modules_when_ready(self):
@@ -14,6 +15,9 @@ class RalphAppConfig(AppConfig):
         when app is ready.
         """
         super().ready()
+
+        generate_listeners()
+
         package = self.module.__name__
         for module in self.get_load_modules_when_ready():
             try:

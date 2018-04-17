@@ -570,3 +570,7 @@ ALLOW_PUSH_GRAPHS_DATA_TO_STATSD = False
 STATSD_GRAPHS_PREFIX = 'ralph.graphs'
 
 TRANSITION_TEMPLATES = None
+# OpenStack event listeners
+
+DCASSET_SYNC_ENDPOINTS = [
+]
