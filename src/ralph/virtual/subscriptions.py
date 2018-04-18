@@ -32,7 +32,8 @@ def generate_listeners():
 
         # NOTE(romcheg): Work around the issue when ready() hook is called
         #                10 times.
-        if sub_name in SUBSCRIPTIONS: continue
+        if sub_name in SUBSCRIPTIONS:
+            continue
 
         SUBSCRIPTIONS[sub_name] = pyhermes.subscriber(sub_name)(
             DCHOST_PROCESSORS[subscription_config['processor']]
