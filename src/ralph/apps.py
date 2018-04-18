@@ -5,6 +5,7 @@ from django.apps import AppConfig
 
 from ralph.virtual.subscriptions import generate_listeners
 
+
 class RalphAppConfig(AppConfig):
     def get_load_modules_when_ready(self):
         return ['subscribers', 'views']
