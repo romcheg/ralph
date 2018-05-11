@@ -33,7 +33,7 @@ setup(
             'validate_ralph = ralph.cross_validator.__main__:main',
         ],
         'ralph.dchost_processors': [
-            'ralph.dchost_processor.noop=ralph.virtual.processors.noop:endpoint',
+            'noop=ralph.virtual.processors.noop:endpoint',
         ],
     },
     classifiers=[

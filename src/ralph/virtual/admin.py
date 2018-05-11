@@ -27,6 +27,7 @@ from ralph.virtual.models import (
     CloudHost,
     CloudProject,
     CloudProvider,
+    CloudSyncProcessor,
     VirtualServer,
     VirtualServerType
 )
@@ -469,4 +470,12 @@ class CloudProjectAdmin(CustomFieldValueAdminMixin, RalphAdmin):
 
 @register(CloudProvider)
 class CloudProviderAdmin(RalphAdmin):
-    pass
+    list_select_related = ['sync_event_processor']
+    list_display = ['name', 'sync_enabled', 'sync_event_processor']
+    list_filter = ['name', 'sync_enabled', 'sync_event_processor']
+
+@register(CloudSyncProcessor)
+class CloudSyncProcessorAdmin(RalphAdmin):
+    fields = ['module']
+    list_display = ['module']
+    list_filter = ['module']

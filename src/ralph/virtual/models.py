@@ -35,10 +35,25 @@ from ralph.signals import post_commit
 logger = logging.getLogger(__name__)
 
 
+class CloudSyncProcessor(models.Model, AdminAbsoluteUrlMixin):
+    class Meta:
+        verbose_name = _('Cloud sync processor')
+        verbose_name_plural = _('Cloud sync processors')
+
+    def __str__(self):
+        return self.module
+
+    module = models.CharField(max_length=250, blank=False)
+
+
 class CloudProvider(AdminAbsoluteUrlMixin, NamedMixin):
     class Meta:
         verbose_name = _('Cloud provider')
         verbose_name_plural = _('Cloud providers')
+
+    sync_enabled = models.BooleanField(null=False, blank=False, default=False)
+    sync_event_processor = models.ForeignKey(CloudSyncProcessor, null=True,
+                                             blank=True)
 
 
 class CloudFlavor(AdminAbsoluteUrlMixin, BaseObject):

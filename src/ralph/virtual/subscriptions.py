@@ -3,12 +3,15 @@ import logging
 import pkg_resources
 import pyhermes
 from django.conf import settings
+from django.utils.text import slugify
 
 
-LOGGER = logging.getLogger(__name__)
+
+logger = logging.getLogger(__name__)
 
 
 ENTRY_POINTS_GROUP = 'ralph.dchost_processors'
+ENDPOINT_PREFIX = 'cloud-sync-'
 DCHOST_PROCESSORS = {}
 SUBSCRIPTIONS = {}
 
@@ -18,7 +21,7 @@ def load_processors():
         try:
             DCHOST_PROCESSORS[ep.name] = ep.resolve()
         except ImportError:
-            LOGGER.error(
+            logger.error(
                 'Could not import DC asset event processor from {}.'
                 ''.format(ep.module_name)
             )
@@ -27,8 +30,14 @@ def load_processors():
 def generate_listeners():
     load_processors()
 
-    for subscription_config in settings.DCASSET_SYNC_ENDPOINTS:
-        sub_name = subscription_config['name']
+    from ralph.virtual.models import CloudProvider
+    cloud_providers = CloudProvider.objects.filter(
+        sync_enabled=True,
+        sync_event_processor__isnull=False
+    ).all()
+
+    for cloud in cloud_providers:
+        sub_name = ENDPOINT_PREFIX + slugify(cloud.name)
 
         # NOTE(romcheg): Work around the issue when ready() hook is called
         #                10 times.
@@ -36,5 +45,5 @@ def generate_listeners():
             continue
 
         SUBSCRIPTIONS[sub_name] = pyhermes.subscriber(sub_name)(
-            DCHOST_PROCESSORS[subscription_config['processor']]
+            DCHOST_PROCESSORS[cloud.sync_event_processor.module]
         )
