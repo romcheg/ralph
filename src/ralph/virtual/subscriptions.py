@@ -1,3 +1,4 @@
+import functools
 import logging
 
 import pkg_resources
@@ -27,6 +28,16 @@ def load_processors():
             )
 
 
+def processor_decorator(processor, cloud_provider):
+    """Allows to bind processors to cloud providers."""
+
+    @functools.wraps(processor)
+    def wrapper(event_data):
+        return processor(cloud_provider, event_data)
+
+    return wrapper
+
+
 def generate_listeners():
     load_processors()
 
@@ -39,11 +50,9 @@ def generate_listeners():
     for cloud in cloud_providers:
         sub_name = ENDPOINT_PREFIX + slugify(cloud.name)
 
-        # NOTE(romcheg): Work around the issue when ready() hook is called
-        #                10 times.
-        if sub_name in SUBSCRIPTIONS:
-            continue
-
         SUBSCRIPTIONS[sub_name] = pyhermes.subscriber(sub_name)(
-            DCHOST_PROCESSORS[cloud.sync_event_processor.module]
+            processor_decorator(
+                DCHOST_PROCESSORS[cloud.sync_event_processor.module],
+                cloud
+            )
         )

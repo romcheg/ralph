@@ -1,9 +1,9 @@
 import logging
 
 
-LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
-def endpoint(event_data):
+def endpoint(cloud_provider, event_data):
     """The endpoint for DC asset synchronisation that does nothing."""
-    LOGGER.info('Received new DC asset syncronisation event. Doing nothing.')
+    logger.info('Received new DC asset syncronisation event. Doing nothing.')
