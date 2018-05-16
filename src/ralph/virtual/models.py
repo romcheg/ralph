@@ -9,6 +9,7 @@ from django.db import models
 from django.dispatch import receiver
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
+from django_cryptography.fields import encrypt
 
 from ralph.admin.helpers import get_value_by_relation_path
 from ralph.assets.models.base import BaseObject
@@ -54,6 +55,7 @@ class CloudProvider(AdminAbsoluteUrlMixin, NamedMixin):
     sync_enabled = models.BooleanField(null=False, blank=False, default=False)
     sync_event_processor = models.ForeignKey(CloudSyncProcessor, null=True,
                                              blank=True)
+    client_config = encrypt(models.TextField(blank=True, null=True))
 
 
 class CloudFlavor(AdminAbsoluteUrlMixin, BaseObject):
