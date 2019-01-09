@@ -1,3 +1,10 @@
+ralph (20190109.2) bionic; urgency=medium
+
+  [ Roman Prykhodchenko ]
+  * Sign changelog commit
+
+ -- root <root@05fd99e21444>  Wed, 09 Jan 2019 16:20:01 +0000
+
 ralph (20190109.1) bionic; urgency=medium
 
   [ Damian Blejwas ]
