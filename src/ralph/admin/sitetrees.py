@@ -89,7 +89,7 @@ def section(section_name, app, model):
 sitetrees = [
     tree('ralph_admin', items=[
         ralph_item(
-            title=_('Data Center'),
+            title=_('Data Centre'),
             url='#',
             url_as_pattern=False,
             perms_mode_all=False,
