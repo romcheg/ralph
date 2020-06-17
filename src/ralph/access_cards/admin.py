@@ -12,10 +12,7 @@ class AccessCardAdmin(TransitionAdminMixin, RalphAdmin):
                     'owner', 'get_employee_id']
     list_select_related = ['user', 'owner']
     raw_id_fields = ['user', 'owner', 'region']
-    list_filter = ['status', 'issue_date', 'visual_number',
-                   'system_number', 'user', 'owner', 'user__segment',
-                   'user__company', 'user__department', 'user__employee_id',
-                   'access_zones', 'notes']
+    list_filter = ['status', 'issue_date',]
     search_fields = ['visual_number', 'system_number', 'user__first_name',
                      'user__last_name', 'user__username']
     readonly_fields = ['get_employee_id']
