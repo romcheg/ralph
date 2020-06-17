@@ -16,7 +16,7 @@ class SIMCardAdmin(MulitiAddAdminMixin, TransitionAdminMixin, RalphAdmin):
     #                    fieldsets - configuration of editor layout
     form = SIMCardForm
     show_transition_history = True
-    list_display = ['status', 'card_number', 'phone_number', 'pin1', 'puk1',
+    list_display = ['status', 'puk1',
                     'user', 'owner', 'warehouse', 'carrier',
                     'quarantine_until']
     multiadd_summary_fields = list_display
