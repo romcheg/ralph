@@ -114,6 +114,47 @@ jobs:
       - name: Check missings migrations
         run: "${GITHUB_WORKSPACE}/scripts/check_missing_migrations.sh"
 
+  settings_test:
+    name: Settings tests
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+      
+      - name: Unshallow local copy
+        run: git fetch --prune --unshallow
+      
+      - name: Install system packages
+        run: sudo apt-get -y --no-install-recommends install libldap2-dev libsasl2-dev
+        env:
+          DEBIAN_FRONDEND: NONINTERACTIVE
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+
+      - name: Install Ralph
+        run: pip3 install "${GITHUB_WORKSPACE}"
+      
+      - name: Cache pip dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('base.txt', 'code_style.txt', 'dev.txt', 'docs.txt', 'hermes.txt', 'openstack.txt', 'prod.txt', 'prod_ldap.txt', '', 'test.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+            ${{ runner.os }}-
+
+      - name: Install Ralph's python dependencies
+        run: |
+          pip3 install -r "${GITHUB_WORKSPACE}/requirements/test.txt"
+          pip3 install -r "${GITHUB_WORKSPACE}/requirements/openstack.txt"
+      
+      - name: Test Ralph's settings
+        run:  ./scripts/test_settings.sh prod test >/dev/null
+
   python_tests:
     name: Python tests
     runs-on: ubuntu-18.04
