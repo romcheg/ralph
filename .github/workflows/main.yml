@@ -44,6 +44,11 @@ jobs:
       
       - name: Unshallow local copy
         run: git fetch --prune --unshallow
+      
+      - name: Install system packages
+        run: apt-get -y --no-install-recommends install libldap2-dev
+        env:
+          DEBIAN_FRONDEND: NONINTERACTIVE
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
