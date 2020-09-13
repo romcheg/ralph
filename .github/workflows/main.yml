@@ -130,7 +130,7 @@ jobs:
       - name: Check missings migrations
         run: "${GITHUB_WORKSPACE}/scripts/check_missing_migrations.sh"
 
-  flake8:
+  code_style:
     runs-on: ubuntu-18.04  
     steps:
       - name: Checkout source code
