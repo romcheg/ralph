@@ -12,7 +12,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  test:
+  python_tests_test:
     # The type of runner that the job will run on
     runs-on: ubuntu-18.04
     strategy:
@@ -84,7 +84,7 @@ jobs:
           DATABASE_PASSWORD: postgres
         run: make coverage
         
-  check_missing_migrations:
+  missing_migrations:
     runs-on: ubuntu-18.04
     strategy:
       matrix:
@@ -129,4 +129,27 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Check missings migrations
         run: "${GITHUB_WORKSPACE}/scripts/check_missing_migrations.sh"
+
+  flake8:
+    runs-on: ubuntu-18.04  
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+                
+      - name: Cache pip dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+            ${{ runner.os }}-
+
+      - name: Run flake8
+        run: make flake
 ...
