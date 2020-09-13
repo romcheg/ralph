@@ -68,7 +68,9 @@ jobs:
             ${{ runner.os }}-
 
       - name: Install Ralph's python dependencies
-        run: pip3 install -r "${GITHUB_WORKSPACE}/requirements/test.txt"
+        run: |
+          pip3 install -r "${GITHUB_WORKSPACE}/requirements/test.txt"
+          pip3 install psycopg2-binary
 
       # Runs a set of commands using the runners shell
       - name: Run tests and coverage with ${{ matrix.python-version }}
@@ -76,5 +78,6 @@ jobs:
           TEST_DB_ENGINE: psql
           DATABASE_USER: postgres
           DATABASE_PASSWORD: postgres
-        run: make coverage
+        run: |
+          make coverage
 ...
