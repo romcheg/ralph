@@ -46,7 +46,7 @@ jobs:
         run: git fetch --prune --unshallow
       
       - name: Install system packages
-        run: sudo apt-get -y --no-install-recommends install libldap2-dev
+        run: sudo apt-get -y --no-install-recommends install libldap2-dev libsasl2-2
         env:
           DEBIAN_FRONDEND: NONINTERACTIVE
 
