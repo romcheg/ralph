@@ -18,13 +18,18 @@ jobs:
     strategy:
       matrix:
         python-version: [3.6]
+        db-engine: ["psql", "mysql"]
+    env:
+      TEST_DB_ENGINE: ${{ matrix.db-engine }}
+      DATABASE_USER: ralph_ng
+      DATABASE_PASSWORD: ralph_ng
 
     services:
-      # Label used to access the service container
       postgres:
-        image: postgres
+        image: postgres:9.4.26
         env:
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: ralph_ng
+          POSTGRES_PASSWORD: ralph_ng
         ports:
           - 5432:5432
         options: >-
@@ -41,6 +46,19 @@ jobs:
           --health-cmd "redis-cli ping"
           --health-interval 10s
           --health-timeout 5s
+
+      mysql:
+        image: mysql:5.6.49
+        env:
+          MYSQL_USER: ralph_ng
+          MYSQL_PASSWORD: ralph_ng
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd mysqladmin ping --silent
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout source code
@@ -74,21 +92,20 @@ jobs:
       - name: Install Ralph's python dependencies
         run: |
           pip3 install -r "${GITHUB_WORKSPACE}/requirements/test.txt"
-          pip3 install psycopg2-binary
+      
+      - name: Install PostgreSQL driver
+        if: ${{ matrix.db-engine == 'psql' }}
+        run: pip3 install psycopg2-binary
 
       # Runs a set of commands using the runners shell
       - name: Run tests and coverage with ${{ matrix.python-version }}
-        env:
-          TEST_DB_ENGINE: psql
-          DATABASE_USER: postgres
-          DATABASE_PASSWORD: postgres
         run: make coverage
         
   missing_migrations:
     runs-on: ubuntu-18.04
     strategy:
       matrix:
-        db-engine: ["psql"]
+        db-engine: ["psql", "mysql"]
     env:
         TEST_DB_ENGINE: ${{ matrix.db-engine }}
           
@@ -124,7 +141,10 @@ jobs:
       - name: Install Ralph's python dependencies
         run: |
           pip3 install -r "${GITHUB_WORKSPACE}/requirements/test.txt"
-          pip3 install psycopg2-binary
+
+      - name: Install PostgreSQL driver
+        if: ${{ matrix.db-engine == 'psql' }}
+        run: pip3 install psycopg2-binary
 
       # Runs a set of commands using the runners shell
       - name: Check missings migrations
