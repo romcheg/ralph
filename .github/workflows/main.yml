@@ -24,7 +24,7 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_PASSWORD: "postgres" &postgres_password
+          POSTGRES_PASSWORD: postgres
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -55,6 +55,6 @@ jobs:
         env:
           TEST_DB_ENGINE: psql
           DATABASE_USER: postgres
-          DATABASE_PASSWORD: *postgres_password
+          DATABASE_PASSWORD: postgres
         run: make coverage
 ...
