@@ -90,7 +90,7 @@ jobs:
       matrix:
         db-engine: ["psql"]
     env:
-        TEST_DB_ENGINE: ${{ db-engine }}
+        TEST_DB_ENGINE: ${{ matrix.db-engine }}
           
     steps:
       - name: Checkout source code
