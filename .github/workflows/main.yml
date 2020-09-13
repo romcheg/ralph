@@ -15,19 +15,46 @@ jobs:
   test:
     # The type of runner that the job will run on
     runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        python-version: [3.6]
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    services:
+      # Label used to access the service container
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: "postgres" &postgres_password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - name: Checkout source code
+        uses: actions/checkout@v2
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Ralph's python dependencies
+        run: pip3 install -r "${$GITHUB_WORKSPACE}/requirements/test.txt"
 
       # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+      - name: Run tests and coverage with ${{ matrix.python-version }}
+        env:
+          TEST_DB_ENGINE: psql
+          DATABASE_USER: postgres
+          DATABASE_PASSWORD: *postgres_password
+        run: make coverage
 ...
