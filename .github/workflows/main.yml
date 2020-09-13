@@ -29,7 +29,7 @@ jobs:
             ${{ runner.os }}-pip-
             ${{ runner.os }}-
       - name: Install Ralph's python dependencies
-        run: pip3 install flake8==3.0.4 isort==4.2.5
+        run: pip3 install -r "${GITHUB_WORKSPACE}/requirements/code_style.txt"
 
       - name: Run flake8
         run: make flake
@@ -96,7 +96,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('base.txt', 'dev.txt', 'docs.txt', 'hermes.txt', 'openstack.txt', 'prod.txt', 'prod_ldap.txt', '', 'test.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('base.txt', 'code_style.txt', 'dev.txt', 'docs.txt', 'hermes.txt', 'openstack.txt', 'prod.txt', 'prod_ldap.txt', '', 'test.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
             ${{ runner.os }}-
@@ -112,7 +112,7 @@ jobs:
       - name: Check missings migrations
         run: "${GITHUB_WORKSPACE}/scripts/check_missing_migrations.sh"
 
-  python_tests_test:
+  python_tests:
     runs-on: ubuntu-18.04
     strategy:
       matrix:
@@ -186,13 +186,15 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('base.txt', 'dev.txt', 'docs.txt', 'hermes.txt', 'openstack.txt', 'prod.txt', 'prod_ldap.txt', '', 'test.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('base.txt', 'code_style.txt', 'dev.txt', 'docs.txt', 'hermes.txt', 'openstack.txt', 'prod.txt', 'prod_ldap.txt', '', 'test.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
             ${{ runner.os }}-
 
       - name: Install Ralph's python dependencies
-        run: pip3 install -r "${GITHUB_WORKSPACE}/requirements/test.txt"
+        run: |
+          pip3 install -r "${GITHUB_WORKSPACE}/requirements/test.txt"
+          pip3 install -r "${GITHUB_WORKSPACE}/requirements/openstack.txt"
       
       - name: Install PostgreSQL driver
         if: ${{ matrix.db-engine == 'psql' }}
