@@ -46,7 +46,7 @@ jobs:
         run: git fetch --prune --unshallow
       
       - name: Install system packages
-        run: apt-get -y --no-install-recommends install libldap2-dev
+        run: sudo apt-get -y --no-install-recommends install libldap2-dev
         env:
           DEBIAN_FRONDEND: NONINTERACTIVE
 
@@ -57,6 +57,15 @@ jobs:
 
       - name: Install Ralph
         run: pip3 install "${GITHUB_WORKSPACE}"
+      
+      - name: Cache pip dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+            ${{ runner.os }}-
 
       - name: Install Ralph's python dependencies
         run: pip3 install -r "${GITHUB_WORKSPACE}/requirements/test.txt"
