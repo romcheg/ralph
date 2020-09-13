@@ -212,6 +212,14 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v2
 
+      - name: Unshallow local copy
+        run: git fetch --prune --unshallow
+        
+      - name: Install system packages
+        run: sudo apt-get -y --no-install-recommends install libldap2-dev libsasl2-dev
+        env:
+          DEBIAN_FRONDEND: NONINTERACTIVE
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
