@@ -149,6 +149,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
             ${{ runner.os }}-
+      
+      - name: Install Ralph's python dependencies
+        run: |
+          pip3 install -r "${GITHUB_WORKSPACE}/requirements/test.txt"
 
       - name: Run flake8
         run: make flake
