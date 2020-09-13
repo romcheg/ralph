@@ -47,6 +47,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install Ralph
+        run: pip3 install "${GITHUB_WORKSPACE}"
+
       - name: Install Ralph's python dependencies
         run: pip3 install -r "${GITHUB_WORKSPACE}/requirements/test.txt"
 
