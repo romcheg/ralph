@@ -47,7 +47,7 @@ jobs:
           --health-retries 5
 
       mysql:
-        image: mysql:5.6.49
+        image: mysql:5.6.45
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_USER: ralph_ng
@@ -124,7 +124,7 @@ jobs:
           --health-retries 5
 
       mysql:
-        image: mysql:5.6.49
+        image: mysql:5.6.45
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_USER: ralph_ng
