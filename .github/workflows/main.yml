@@ -41,6 +41,8 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
+      
+      - name: Unshallow local copy
         run: git fetch --prune --unshallow
 
       - name: Set up Python ${{ matrix.python-version }}
