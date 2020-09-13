@@ -49,7 +49,7 @@ jobs:
       mysql:
         image: mysql:5.6.49
         env:
-          MYSQL_ROOT_PASSWORD: ralph_ng
+          MYSQL_ROOT_PASSWORD: root
           MYSQL_USER: ralph_ng
           MYSQL_PASSWORD: ralph_ng
           MYSQL_DATABASE: ralph_ng
@@ -99,7 +99,7 @@ jobs:
         run: pip3 install psycopg2-binary
 
       # Runs a set of commands using the runners shell
-      - name: Run tests and coverage with ${{ matrix.python-version }}
+      - name: Run tests with coverage using python-${{ matrix.python-version }}
         run: make coverage
         
   missing_migrations:
@@ -126,7 +126,7 @@ jobs:
       mysql:
         image: mysql:5.6.49
         env:
-          MYSQL_ROOT_PASSWORD: ralph_ng
+          MYSQL_ROOT_PASSWORD: root
           MYSQL_USER: ralph_ng
           MYSQL_PASSWORD: ralph_ng
           MYSQL_DATABASE: ralph_ng
