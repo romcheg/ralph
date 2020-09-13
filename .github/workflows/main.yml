@@ -151,8 +151,7 @@ jobs:
             ${{ runner.os }}-
       
       - name: Install Ralph's python dependencies
-        run: |
-          pip3 install -r "${GITHUB_WORKSPACE}/requirements/test.txt"
+        run: pip3 install flake8==3.0.4 isort==4.2.5
 
       - name: Run flake8
         run: make flake
